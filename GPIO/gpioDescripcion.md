@@ -10,8 +10,36 @@ La libreria empleada para el control de los GPIO y que incluye la gran mayoria d
 ```
 #include "driver/gpio.h" // Lirería para gestionar las funciones de los gpios
 ```
+### Función Reset pin
+La primera función a tomar en cuenta es:
 
+```
+    esp_err_t  gpio_reset_pin(gpio_num)
+```
+Esta función restablece al estado predeterminado a un pin, el estado predeterminado implica que se enciende la funcion GPIO, se coloca una resistencia pullup y se deshabilitada la entrada y salida. Siempre devuelve ESP_OK, como parametro sólo necesita el número de GPIO a resetear.
 
+La biblioteca incluye las definiciones de los pines GPIO como: `GPIO_NUM_0`, `GPIO_NUM_1`, `GPIO_NUM_2`, y así sucesivamente; las numeraciones existen hasta el pin 39, excluyendo a los pines 20, 24, y del 28 al 31. Recordar que los pines del 34 al 39 son sólo de entrada.
 
+### Función Set Direction
+La función Set Direction configura la dirección del GPIO, ya sea como entrada, salida o entrada y salida.
+```
+    esp_err_t   gpio_set_direction( gpio_num , modo )
+```
+En el primer parametro se coloca el numero de pin, para el segundo existen varias opciones, y se debe elegir en función de lo que se necesite. A continuación se presentan los diferentes modos que existen:
 
+| Modo          | Descripción |
+| ------------- |:-------------:|
+| GPIO_MODE_DISABLE      | Deshabilita entrada y salida    |
+| GPIO_MODE_INPUT      | Solo entrada     |
+| GPIO_MODE_OUTPUT      | Solo salida     |
+| GPIO_MODE_INPUT_OUTPUT_OD | Salida y entrada con modo open-drain |
+| GPIO_MODE_INPUT_OUTPUT | modo de entrada y salida |
 
+Lo más comunes son `GPIO_MODE_INPUT` y `GPIO_MODE_OUTPUT`.
+
+### Función Set Level
+Establece el nivel de voltaje a la salida del GPIO, según el nivel lógico que se desee.
+```
+    esp_err_t   gpio_set_level( gpio_num , uint32_t nivel )
+```
+Como primer parametro se coloca el número de pin, mientras que el segundo se puede colocar 0 para nivel bajo, y 1 para nivel alto.
