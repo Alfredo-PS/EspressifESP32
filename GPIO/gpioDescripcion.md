@@ -42,4 +42,19 @@ Establece el nivel de voltaje a la salida del GPIO, según el nivel lógico que 
 ```
     esp_err_t   gpio_set_level( gpio_num , uint32_t nivel )
 ```
-Como primer parametro se coloca el número de pin, mientras que el segundo se puede colocar 0 para nivel bajo, y 1 para nivel alto.
+Como primer parametro se coloca el número de pin, mientras que el segundo se puede colocar 0 para nivel bajo, y 1 para nivel alto. 
+
+### Función Get Level.
+Esta función permite conocer el estado de entrada de un pin, se debe tener en cuenta que si el pad no está configurado como entrada (o entrada y salida), el valor devuelto siempre será 0.
+
+```
+    int gpio_get_level( gpio_num )
+```
+Como unico parametro recibe el número de pin del cual se quiere conocer el valor, y devuelve 0 o 1, según el nivel lógico al que se encuentre el pin.
+
+### Función Set Pull Mode
+Esta función permite configurar la resistencias internas de los puertos GPIO, ya sea de pull-up o pull down.
+```
+    //esp_err_t gpio_set_pull_mode( gpio_num_t gpio_num , gpio_pull_mode_t pull )
+    gpio_set_pull_mode(numero, pull);
+```
