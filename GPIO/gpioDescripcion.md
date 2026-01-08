@@ -91,6 +91,42 @@ void app_main(void) // Función principal de un programa de ESP32, el firmware b
 }
 
 ```
+## Función Set Pull Mode
+Esta función permite configurar la resistencias internas de los puertos GPIO, ya sea de pull-up o pull down.
+```C++
+    esp_err_t gpio_set_pull_mode( gpio_num_t gpio_num , gpio_pull_mode_t pull )
+```
+Como primer parámetro se coloca el número de GPIO, y por segundo parametro se coloca el modo de subida o bajada.
+| Modo  | Descripción |
+| ------------- |:-------------:|
+| GPIO_PULLUP_ONLY      | Resistencia pull-up     |
+| GPIO_PULLDOWN_ONLY     | Resistencia pull-down     |
+| GPIO_PULLUP_PULLDOWN     | Resistencia pull-up + pull-down    |
+| GPIO_FLOATING | Alta impedancia, el pin no se conecta ni a 3.3 ni a GND |
+
+``` C++
+// ------------- CODIGO DE EJEMPLO ---------------------
+/*  Configuración básica de un GPIO  */
+
+#include <stdio.h>       // Librería estandar de C para inputs/outputs
+#include "driver/gpio.h" // Lirería para gestionar las funciones de los gpios
+
+void app_main(void) // Función principal de un programa de ESP32, el firmware busca esta función para empezar operaciones.
+{
+    printf("# # # Configuración básica de un pin # # #\n");
+
+    gpio_reset_pin(GPIO_NUM_4); // Se reinicia la configuración del pin 22
+    gpio_reset_pin(GPIO_NUM_16);
+    gpio_reset_pin(GPIO_NUM_17);
+
+    gpio_set_direction(GPIO_NUM_4, GPIO_MODE_OUTPUT); // Establece el pin 4 como Salida
+    gpio_set_direction(GPIO_NUM_16, GPIO_MODE_OUTPUT); // Establece el pin 16 como Salida
+    gpio_set_direction(GPIO_NUM_17, GPIO_MODE_INPUT); // Establece el pin 17 como Entrada
+
+    gpio_set_pull_mode(GPIO_NUM_17, GPIO_PULLDOWN_ONLY) // Habilita la resistencia de pull-down en el GPIO 17
+}
+
+```
 
 ## Función Set Level
 Establece el nivel de voltaje a la salida del GPIO, según el nivel lógico que se desee.
@@ -118,6 +154,8 @@ void app_main(void) // Función principal de un programa de ESP32, el firmware b
     gpio_set_direction(GPIO_NUM_16, GPIO_MODE_OUTPUT); // Establece el pin 16 como Salida
     gpio_set_direction(GPIO_NUM_17, GPIO_MODE_INPUT); // Establece el pin 17 como Entrada
 
+    gpio_set_pull_mode(GPIO_NUM_17, GPIO_PULLDOWN_ONLY) // Habilita la resistencia de pull-down en el GPIO 17
+
     gpio_set_level(GPIO_NUM_4, 0); // Establece en bajo el nivel lógico del GPIO 4
     gpio_set_level(GPIO_NUM_16, 1); // Establece en alto el nivel lógico del GPIO 16
 }
@@ -132,19 +170,35 @@ Esta función permite conocer el estado de entrada de un pin, se debe tener en c
 ```
 Como unico parametro recibe el número de pin del cual se quiere conocer el valor, y devuelve 0 o 1, según el nivel lógico al que se encuentre el pin.
 
-## Función Set Pull Mode
-Esta función permite configurar la resistencias internas de los puertos GPIO, ya sea de pull-up o pull down.
-```C++
-    //Definición en libreria:
-    esp_err_t gpio_set_pull_mode( gpio_num_t gpio_num , gpio_pull_mode_t pull )
-    //Uso común
-    gpio_set_pull_mode(numero, pull);
+``` C++
+// ------------- CODIGO DE EJEMPLO ---------------------
+/*  Configuración básica de un GPIO  */
+
+#include <stdio.h>       // Librería estandar de C para inputs/outputs
+#include "driver/gpio.h" // Lirería para gestionar las funciones de los gpios
+
+void app_main(void) // Función principal de un programa de ESP32, el firmware busca esta función para empezar operaciones.
+{
+    printf("# # # Configuración básica de un pin # # #\n");
+
+    gpio_reset_pin(GPIO_NUM_4); // Se reinicia la configuración del pin 22
+    gpio_reset_pin(GPIO_NUM_16);
+    gpio_reset_pin(GPIO_NUM_17);
+
+    gpio_set_direction(GPIO_NUM_4, GPIO_MODE_OUTPUT); // Establece el pin 4 como Salida
+    gpio_set_direction(GPIO_NUM_16, GPIO_MODE_OUTPUT); // Establece el pin 16 como Salida
+    gpio_set_direction(GPIO_NUM_17, GPIO_MODE_INPUT); // Establece el pin 17 como Entrada
+
+    gpio_set_pull_mode(GPIO_NUM_17, GPIO_PULLDOWN_ONLY) // Habilita la resistencia de pull-down en el GPIO 17
+
+    gpio_set_level(GPIO_NUM_4, 0); // Establece en bajo el nivel lógico del GPIO 4
+    gpio_set_level(GPIO_NUM_16, 1); // Establece en alto el nivel lógico del GPIO 16
+
+    int valor = gpio_get_level(GPIO_NUM_17); // Guarda el valor del pin 17 en "Valor"
+
+    printf(valor); // Imprime valor
+}
+
 ```
-Como primer parámetro se coloca el número de GPIO, y por segundo parametro se coloca el modo de subida o bajada.
-| Modo  | Descripción |
-| ------------- |:-------------:|
-| GPIO_PULLUP_ONLY      | Resistencia pull-up     |
-| GPIO_PULLDOWN_ONLY     | Resistencia pull-down     |
-| GPIO_PULLUP_PULLDOWN     | Resistencia pull-up + pull-down    |
-| GPIO_FLOATING | Alta impedancia, el pin no se conecta ni a 3.3 ni a GND |
+
 
