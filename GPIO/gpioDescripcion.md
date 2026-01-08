@@ -8,7 +8,7 @@ El chip de la ESP32 cuenta con 40 pads GPIO físicos, aunque algunos no se puede
 Algunas consideraciones importantes son que Los GPIO del 6 al 11 se utilizan para flashear (Cargar el programa en la memoria de la ESP32), los GPIO  del 34 al 39 solo se pueden configurar como modo de entrada y no poseen funciones de pullup o pulldown por software.
 La libreria empleada para el control de los GPIO y que incluye la gran mayoria de funciones a utilizar es la siguiente:
 ```C++
-#include "driver/gpio.h" // Lirería para gestionar las funciones de los gpios
+#include "driver/gpio.h" // Librería para gestionar las funciones de los gpios
 ```
 A lo largo del siguiente documento se realizará un código de ejemplo para utilizar los puertos GPIO, se recomienda realizar el código junto al grupo.
 
@@ -46,7 +46,7 @@ void app_main(void) // Función principal de un programa de ESP32, el firmware b
 {
     printf("# # # Configuración básica de un pin # # #\n");
 
-    gpio_reset_pin(GPIO_NUM_4); // Se reinicia la configuración del pin 22
+    gpio_reset_pin(GPIO_NUM_4); // Se reinicia la configuración del pin 4
     gpio_reset_pin(GPIO_NUM_16);
     gpio_reset_pin(GPIO_NUM_17);
 }
@@ -81,7 +81,7 @@ void app_main(void) // Función principal de un programa de ESP32, el firmware b
 {
     printf("# # # Configuración básica de un pin # # #\n");
 
-    gpio_reset_pin(GPIO_NUM_4); // Se reinicia la configuración del pin 22
+    gpio_reset_pin(GPIO_NUM_4); // Se reinicia la configuración del pin 4
     gpio_reset_pin(GPIO_NUM_16);
     gpio_reset_pin(GPIO_NUM_17);
 
@@ -115,7 +115,7 @@ void app_main(void) // Función principal de un programa de ESP32, el firmware b
 {
     printf("# # # Configuración básica de un pin # # #\n");
 
-    gpio_reset_pin(GPIO_NUM_4); // Se reinicia la configuración del pin 22
+    gpio_reset_pin(GPIO_NUM_4); // Se reinicia la configuración del pin 4
     gpio_reset_pin(GPIO_NUM_16);
     gpio_reset_pin(GPIO_NUM_17);
 
@@ -146,7 +146,7 @@ void app_main(void) // Función principal de un programa de ESP32, el firmware b
 {
     printf("# # # Configuración básica de un pin # # #\n");
 
-    gpio_reset_pin(GPIO_NUM_4); // Se reinicia la configuración del pin 22
+    gpio_reset_pin(GPIO_NUM_4); // Se reinicia la configuración del pin 4
     gpio_reset_pin(GPIO_NUM_16);
     gpio_reset_pin(GPIO_NUM_17);
 
@@ -181,7 +181,7 @@ void app_main(void) // Función principal de un programa de ESP32, el firmware b
 {
     printf("# # # Configuración básica de un pin # # #\n");
 
-    gpio_reset_pin(GPIO_NUM_4); // Se reinicia la configuración del pin 22
+    gpio_reset_pin(GPIO_NUM_4); // Se reinicia la configuración del pin 4
     gpio_reset_pin(GPIO_NUM_16);
     gpio_reset_pin(GPIO_NUM_17);
 
