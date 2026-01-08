@@ -18,6 +18,7 @@ A lo largo del siguiente documento se realizará un código de ejemplo para util
 
 #include <stdio.h>       // Librería estandar de C para inputs/outputs
 #include "driver/gpio.h" // Lirería para gestionar las funciones de los gpios
+
 void app_main(void) // Función principal de un programa de ESP32, el firmware busca esta función para empezar operaciones.
 {
     printf("# # # Configuración básica de un pin # # #\n");
@@ -27,7 +28,7 @@ void app_main(void) // Función principal de un programa de ESP32, el firmware b
 ## Función Reset pin
 La primera función a tomar en cuenta es:
 
-```
+```C++
     esp_err_t gpio_reset_pin( gpio_num_t gpio_num )
 ```
 Esta función restablece al estado predeterminado a un pin, esto implica que se enciende la funcion GPIO, se coloca una resistencia pullup y se deshabilitada la entrada y salida. Siempre devuelve ESP_OK como parametro, sólo necesita el número de GPIO a resetear.
@@ -40,19 +41,22 @@ La biblioteca incluye las definiciones de los pines GPIO como: `GPIO_NUM_0`, `GP
 
 #include <stdio.h>       // Librería estandar de C para inputs/outputs
 #include "driver/gpio.h" // Lirería para gestionar las funciones de los gpios
+
 void app_main(void) // Función principal de un programa de ESP32, el firmware busca esta función para empezar operaciones.
 {
     printf("# # # Configuración básica de un pin # # #\n");
 
-    gpio_reset_pin(GPIO_NUM_22); // Se reinicia la configuración del pin 22
+    gpio_reset_pin(GPIO_NUM_4); // Se reinicia la configuración del pin 22
+    gpio_reset_pin(GPIO_NUM_16);
+    gpio_reset_pin(GPIO_NUM_17);
 }
 
 ```
 
 ## Función Set Direction
 La función Set Direction configura la dirección del GPIO, ya sea como entrada, salida o entrada y salida.
-```
-    esp_err_t   gpio_set_direction( gpio_num , modo )
+```C++
+    esp_err_t gpio_set_direction( gpio_num_t gpio_num , gpio_mode_t modo )
 ```
 En el primer parametro se coloca el numero de pin, para el segundo existen varias opciones, y se debe elegir en función de lo que se necesite. A continuación se presentan los diferentes modos que existen:
 
@@ -66,12 +70,59 @@ En el primer parametro se coloca el numero de pin, para el segundo existen varia
 
 Lo más comunes son `GPIO_MODE_INPUT` y `GPIO_MODE_OUTPUT`.
 
+``` C++
+// ------------- CODIGO DE EJEMPLO ---------------------
+/*  Configuración básica de un GPIO  */
+
+#include <stdio.h>       // Librería estandar de C para inputs/outputs
+#include "driver/gpio.h" // Lirería para gestionar las funciones de los gpios
+
+void app_main(void) // Función principal de un programa de ESP32, el firmware busca esta función para empezar operaciones.
+{
+    printf("# # # Configuración básica de un pin # # #\n");
+
+    gpio_reset_pin(GPIO_NUM_4); // Se reinicia la configuración del pin 22
+    gpio_reset_pin(GPIO_NUM_16);
+    gpio_reset_pin(GPIO_NUM_17);
+
+    gpio_set_direction(GPIO_NUM_4, GPIO_MODE_OUTPUT); // Establece el pin 4 como Salida
+    gpio_set_direction(GPIO_NUM_16, GPIO_MODE_OUTPUT); // Establece el pin 16 como Salida
+    gpio_set_direction(GPIO_NUM_17, GPIO_MODE_INPUT); // Establece el pin 17 como Entrada
+}
+
+```
+
 ## Función Set Level
 Establece el nivel de voltaje a la salida del GPIO, según el nivel lógico que se desee.
-```
-    esp_err_t   gpio_set_level( gpio_num , uint32_t nivel )
+```C++
+    esp_err_t gpio_set_level( gpio_num_t gpio_num , uint32_t nivel )
 ```
 Como primer parametro se coloca el número de pin, mientras que el segundo se puede colocar 0 para nivel bajo, y 1 para nivel alto. 
+
+``` C++
+// ------------- CODIGO DE EJEMPLO ---------------------
+/*  Configuración básica de un GPIO  */
+
+#include <stdio.h>       // Librería estandar de C para inputs/outputs
+#include "driver/gpio.h" // Lirería para gestionar las funciones de los gpios
+
+void app_main(void) // Función principal de un programa de ESP32, el firmware busca esta función para empezar operaciones.
+{
+    printf("# # # Configuración básica de un pin # # #\n");
+
+    gpio_reset_pin(GPIO_NUM_4); // Se reinicia la configuración del pin 22
+    gpio_reset_pin(GPIO_NUM_16);
+    gpio_reset_pin(GPIO_NUM_17);
+
+    gpio_set_direction(GPIO_NUM_4, GPIO_MODE_OUTPUT); // Establece el pin 4 como Salida
+    gpio_set_direction(GPIO_NUM_16, GPIO_MODE_OUTPUT); // Establece el pin 16 como Salida
+    gpio_set_direction(GPIO_NUM_17, GPIO_MODE_INPUT); // Establece el pin 17 como Entrada
+
+    gpio_set_level(GPIO_NUM_4, 0); // Establece en bajo el nivel lógico del GPIO 4
+    gpio_set_level(GPIO_NUM_16, 1); // Establece en alto el nivel lógico del GPIO 16
+}
+
+```
 
 ## Función Get Level.
 Esta función permite conocer el estado de entrada de un pin, se debe tener en cuenta que si el pad no está configurado como entrada (o entrada y salida), el valor devuelto siempre será 0.
