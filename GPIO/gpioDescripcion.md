@@ -54,7 +54,17 @@ Como unico parametro recibe el número de pin del cual se quiere conocer el valo
 
 ### Función Set Pull Mode
 Esta función permite configurar la resistencias internas de los puertos GPIO, ya sea de pull-up o pull down.
-```
-    //esp_err_t gpio_set_pull_mode( gpio_num_t gpio_num , gpio_pull_mode_t pull )
+```C++
+    //Definición en libreria:
+    esp_err_t gpio_set_pull_mode( gpio_num_t gpio_num , gpio_pull_mode_t pull )
+    //Uso común
     gpio_set_pull_mode(numero, pull);
 ```
+Como primer parámetro se coloca el número de GPIO, y por segundo parametro se coloca el modo de subida o bajada.
+| Modo  | Descripción |
+| ------------- |:-------------:|
+| GPIO_PULLUP_ONLY      | Resistencia pull-up     |
+| GPIO_PULLDOWN_ONLY     | Resistencia pull-down     |
+| GPIO_PULLUP_PULLDOWN     | Resistencia pull-up + pull-down    |
+| GPIO_FLOATING | Alta impedancia, el pin no se conecta ni a 3.3 ni a GND |
+
