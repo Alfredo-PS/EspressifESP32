@@ -104,7 +104,7 @@ Como primer parámetro se coloca el número de GPIO, y por segundo parametro se 
 | GPIO_PULLUP_PULLDOWN     | Resistencia pull-up + pull-down    |
 | GPIO_FLOATING | Alta impedancia, el pin no se conecta ni a 3.3 ni a GND |
 
-![Comparativa entre Pull-up y pull-down.](https://github.com/Alfredo-PS/EspressifESP32/blob/091dfe684e6df8e6b7a3c3ce226fdd816e19c8d0/GPIO/imagenesGPIO/Pull-up-pull-down.jpg) 
+![Comparativa entre Pull-up y pull-down.](https://github.com/Alfredo-PS/EspressifESP32/blob/66483b89631f111d1da697beac82e846a62a543f/.addons/img01/Pull-up-pull-down.jpg) 
 
 ``` C++
 // ------------- CODIGO DE EJEMPLO ---------------------
