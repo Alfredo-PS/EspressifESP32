@@ -3,7 +3,7 @@
 
 El chip de la ESP32 cuenta con 40 pads GPIO físicos, aunque algunos no se pueden usar o no tienen un pin correspondiente en el encapsulado, normalmente los modelos más comerciales de la ESP32 son de 38 o 36 pines con salidas a determinados puertos GPIO e incluyen salidas a VCC y GND.
 
-![Pines y función de cada uno de la ESP32.](https://github.com/Alfredo-PS/EspressifESP32/blob/46660ab65ca48f275c184f119a226219ae52b4f0/GPIO/imagenesGPIO/ESP32-PINES.png) 
+![Pines y función de cada uno de la ESP32.](https://github.com/Alfredo-PS/EspressifESP32/blob/fe776c0069030b63c296f1ba1b49156af699bb2b/.addons/img01/ESP32-PINES.png) 
 
 Algunas consideraciones importantes son que Los GPIO del 6 al 11 se utilizan para flashear (Cargar el programa en la memoria de la ESP32), los GPIO  del 34 al 39 solo se pueden configurar como modo de entrada y no poseen funciones de pullup o pulldown por software.
 La libreria empleada para el control de los GPIO y que incluye la gran mayoria de funciones a utilizar es la siguiente:
