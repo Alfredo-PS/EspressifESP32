@@ -9,5 +9,7 @@ Una vez instalado se mostrará una interfaz como la siguiente, para descargar la
 
 Una vez finalice el proceso de instalación hay que configurar la extesión, lo escencial es configurar como servidor a Github para el control de versiones, **la version de IDF preferente en este curso será la 5.2**, es importante descargar esta versión para que todos los códigos funcionen correctamente, entre versiones suelen cambiar librerias y drivers, por lo que puede que si no se descarga esta versión las plantillas y otros códigos puede que no funcionen correctamente; las carpetas en donde se guardaran las herramientas y codigos se pueden dejar por defecto, o selecionar según las necesidades.
 
+![ Configuración de la versión de IDF. ](https://github.com/Alfredo-PS/EspressifESP32/blob/92984d6a61cb13c7d31a2c4791d50c9f1e0d6cdf/.addons/img00/VS-04.png)
 
+Una vez hecho esto la extensión está lista para usarse, el IDF ya incluye algunos ejemplos, como primer paso abriremos 
 
