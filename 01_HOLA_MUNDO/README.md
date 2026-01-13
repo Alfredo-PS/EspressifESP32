@@ -23,6 +23,7 @@ En este menú se puede escoger entre una serie de ejemplos y plantillas, para pr
 ![ Plantilla Hola mundo. ](https://github.com/Alfredo-PS/EspressifESP32/blob/de539458b6c3f0c02fc0a38ddb0c7062d3a0de3e/.addons/img00/VS-07.png)
 
 Finalmente, se abrirá una nueva pestaña con la vista del proyecto, en el explorador de archivos a la derecha, se observa el árbol de archivos con las diferentes secciones que integran al proyecto, en la sección main es donde se encontrarán los archivos a trabajar, tanto el punto C, como el CMakeLists. La estructura de los proyectos está basada en CMake que es un sistema que organiza la compilación de los archivos fuente para generar el ejecutable. Todo componente, como es el main debe tener un archivo CMakeLists.txt, en donde se declaran los archivos que se deben compilar y las carpetas que contienen los encabezados.
+
 El main.c es el punto de entrada del programa, y se ejecuta siempre al inicio de la tarjeta como una tarea en el procesador. Los archivos *sdkconfig* contienen todoa la configuracipon de hardware y software del proyecto, no se debe editar a mano, se puede configurar por medio de la misma extensión en *menuconfig*
 ![Vista principal del archivo hello_world_main.c ](https://github.com/Alfredo-PS/EspressifESP32/blob/de539458b6c3f0c02fc0a38ddb0c7062d3a0de3e/.addons/img00/VS-08.png).
 
@@ -61,8 +62,114 @@ IDF permite la programación tanto en C como en C++, a continuación se presenta
 | int32_t     | Entero con signo de 32 bits  | -2,147,483,648 a 2,147,483,647 |
 
 ### Calificadores de Variables
+
 Encargados de modificar el comportamientto de las variables en memoria.
 
+| Calificador  | Right columns |
+| :-------------: |:-------------:|
+| const      | Variable de sólo lectura, se guarda en la memoria Flash     |
+| static      | Dentro de funciones mantiene su valor despues de la termine la función, y fuera de ellas hace que la variable solo sea visible dentro de ese archivo     |
+| volatile      | variable pensada para cambiar en cualquier momento     |
+
+### Estructuras
+Permiten agrupar las variables de distintos tipos bajo un solo nombre, toda la configuración de perifericos y sistemas en IDF se realiza por medio de estructuras.
+
+```C
+struct SensorData {
+    uint32_t id;
+    float temperatura;
+    bool activo;
+}; // Esta estructura ocupa aprox 9-12 bytes dependiendo del alineamiento.
+```
+### Operadores.
+
+| Operadores  | Simbolos |
+| ------------- |:-------------:|
+| Aritméticos      | +,-,*,/,%; pow(), sqr()     |
+| Lógicos      | $$ (AND), ll (OR), ! (NOT)    |
+| De comparación      | ==, !=, >, <, >=, <=     |
+| Bit a bit | &, l, ^, <<, >> |
+### Standard Input Output, stdio.h
+Es una biblioteca de C que actúa como la interfaz entre el código y el mundo exterior, es decir entre la ESP32 y la consola de IDF en este caso. La primera función a revisar en `printf()`, la cual sirve para enviar texto y valores por consola, por ejemplo:
+```C
+#include <stdio.h>
+
+void app_main(void) {
+    printf("¡Hola mundo!");
+    int lectura = 4095;
+    // %d es un especificador de formato para enteros
+    printf("La lectura del sensor es: %d\n", lectura);
+}
+```
+Cuenta con varios especifiadores de formato que defines los datos que se mostraran en consola, los más comunes son:
+
+| Especificador de formato  | Tipo de dato |
+| :-------------: |:-------------:|
+| %d      | int: entero con signo     |
+| %u      | uint32_t: entero sin signo     |
+| %f      | float: decimal simple     |
+| %x| hexadecimal|
+| %s | string: cadena de caracteres|
+| %p | Dirección a un puntero|
+Nota: En C un string se forma al crear un arreglo de caracteres, en donde por defento se reserva un espacio adicional para el carácter "\0" que indica la terminación de la cadena, por ejemplo: `char texto[] = "Hola mundo";`.
+
+Para leer datos desde la consola se puede utilizar la función `scanf()`, con ciertas reservas, pues este método detiene la ejecución del programa y espera a que el usuario escriba algo en el monitor serial y presione enter, lo que detiene cualquier otro proceso dentro del main, más adelante se revisará un metodo no bloqueante.
+```C
+
+```
+
+
+### Control de flujo.
+Condicionales:
+```C
+if (voltaje > 3.3) {
+    // Código si es verdadero
+} else {
+    // Código si es falso
+}
+
+switch (estado) {
+    case 1: /* hacer algo */ break;
+    default: /* opcional */ break;
+}
+```
+De bucle:
+```C
+// For: ideal cuando sabes cuántas veces repetir
+for (int i = 0; i < 10; i++) { ... }
+
+// While: ideal para bucles infinitos en ESP32
+while (true) {
+    // Tu código principal aquí
+}
+```
+### Punteros o apuntadores.
+Los punteros son herramientas vitales en la programación en C, en IDF son ampliamente usados, tanto para configurar perifericos, como en ciertas funciones de librerias, y en general como un método eficiente de manejo de datos, a continuación se realiza un resumen simple de su forma de trabajo.
+Lo primero que hay que recorda es que una variable es en realidad una dirección de memoria, en que se puede almacenar información. Los simbolos utilizados en el manejo de apuntadores son:
+
+
+| Símbolo  | Significado |
+| ------------- |:-------------:|
+| &varible      | Dame la direción de *"variable"*     |
+| *puntero      | ve a la dirección almacenada en *"puntero"* y dame el contenido     |
+
+Ejemplo básico:
+```C
+#include <stdio.h>
+void app_main(void)
+{
+    printf("Hello world!\n");
+
+    int edad = 25;       // Una variable normal
+    int *p_edad = &edad; // Un puntero que apunta a la dirección de 'edad'
+
+    printf("Valor de edad: %d \n", edad);     // Imprime 25
+    printf("Direccion de edad: %p \n", &edad); // Imprime algo como 0x3FFB...
+    printf("Valor del puntero: %p \n", p_edad); // Imprime la misma dirección
+    printf("Contenido apuntado: %d \n", *p_edad); // El asterisco entra a la dirección
+}
+```
+![ Ejemplo del uso de punteros. ](https://github.com/Alfredo-PS/EspressifESP32/blob/a5a3b9ba2a9f69262d1bd0ecb22ca07615c2f507/.addons/img00/VS-13.png)
 
 
 
