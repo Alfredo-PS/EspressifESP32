@@ -37,8 +37,37 @@ La extensión de IDF cuenta con un monitor serial que nos permite visualizar la 
 
 Con las herrameintas anteriormente mencionadas es posible compilar y cargar el programa a la ESP32, verificar que en la consola se tenga una salida parecida a la siguiente imagen. 
 ![ Salida en consola del programa de ejemplo Hola mundo. ](https://github.com/Alfredo-PS/EspressifESP32/blob/b91711a1a0122722230877021f5a5ebc66dac3b9/.addons/img00/VS-11.png)
+## ESP LOG
+La librería `esp_log.h` es una librería diseñada para arrojar avisos en consola.
 
-## Herrameintas útiles para el curso.
+```C
+/* Uso de logs */
+
+#include <stdio.h>   // Librería estandar de C para inputs/outputs
+#include "esp_log.h" // Librería para "arrojar" logs en consola
+
+static const char *TAG = "ESP32"; // El 'TAG' es una etiqueta que se utiliza para identificar la fuente del mensaje de registro.
+
+void app_main(void) // Función principal de un programa de ESP32, el firmware busca esta función para empezar operaciones.
+{
+    printf("\n# # # USO DE LOGS # # #\n\n");
+    
+    printf("El 'TAG' es una etiqueta que se utiliza para identificar la fuente del mensaje de registro.\n\n");
+    ESP_LOGI(TAG, "*** Hola mundo (INFORMATIVO) ***");
+    printf("Esta funcion se utiliza para imprimir mensajes de informacion.\nEs útil para imprimir mensajes que proporcionan información sobre el estado del programa o los datos procesados.\n\n");
+    ESP_LOGW(TAG, "*** Hola mundo (WARNING) ***");
+    printf("Se utiliza para imprimir mensajes de advertencia.\nEstos mensajes indican condiciones que podrían ser problemáticas o inesperadas, pero que no necesariamente causan un fallo en el programa.\n\n");
+    ESP_LOGE(TAG, "*** Hola mundo (ERROR) ***");
+    printf("Se utiliza para imprimir mensajes de error.\nEstos mensajes indican condiciones de error que requieren la atención del desarrollador y pueden indicar problemas graves que afectan el funcionamiento del programa.\n\n");
+    ESP_LOGD(TAG, "*** Hola mundo (DEBUGGING) ***");
+    printf("Se utiliza para imprimir mensajes de depuración.\nEstos mensajes se utilizan durante el desarrollo para proporcionar información detallada sobre el funcionamiento del programa que puede ser útil para depurar problemas.\n\n");
+    ESP_LOGV(TAG, "*** Hola mundo (VERBOSIDAD) ***");
+    printf("NOTA: Se utiliza para imprimir mensajes de verbosidad.\nEstos mensajes son los más detallados y se utilizan para proporcionar una salida muy detallada sobre el funcionamiento interno del programa. Son útiles para la depuración intensiva o para imprimir información detallada en situaciones específicas.\n\n");
+    printf("\n*** Si no se puede visualizar los LOGS de debug y verbosity es porque se tiene que configurar los niveles de LOGGING permitido\n\n");
+}
+```
+
+## Herramientas útiles para el curso.
 IDF permite la programación tanto en C como en C++, a continuación se presentan algunas caracteristicas del lenguaje C, sólo para repasar conceptos básicos. 
 
 ### Tipos de datos básicos
