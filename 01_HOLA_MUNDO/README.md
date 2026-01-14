@@ -117,12 +117,8 @@ Nota: En C un string se forma al crear un arreglo de carácteres, en donde por d
 Para leer datos desde la consola se puede utilizar la función `scanf()`, con ciertas reservas, pues este método detiene la ejecución del programa y espera a que el usuario escriba algo en el monitor serial y presione enter, lo que detiene cualquier otro proceso dentro del main, más adelante se revisará un metodo no bloqueante. Para poder utilizar el método scanf se necesita activar la comunicación por UART de la consola, más adelante se explicarán los métodos de comunicación y se revisará a detalle estas funciones.
 ```C
 #include <stdio.h>
-#include <string.h>
-#include "esp_system.h"
-#include "esp_console.h"
-#include "esp_vfs_dev.h"
-#include "esp_vfs_fat.h"
 #include "driver/uart.h"
+#include "esp_vfs_dev.h"
  
 void app_main(void)
 {  
