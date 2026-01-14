@@ -65,8 +65,8 @@ IDF permite la programación tanto en C como en C++, a continuación se presenta
 
 Encargados de modificar el comportamientto de las variables en memoria.
 
-| Calificador  | Right columns |
-| :-------------: |:-------------:|
+| Calificador  | Significado |
+| :-------------: |-------------|
 | const      | Variable de sólo lectura, se guarda en la memoria Flash     |
 | static      | Dentro de funciones mantiene su valor despues de la termine la función, y fuera de ellas hace que la variable solo sea visible dentro de ese archivo     |
 | volatile      | variable pensada para cambiar en cualquier momento     |
@@ -111,10 +111,35 @@ Cuenta con varios especifiadores de formato que defines los datos que se mostrar
 | %x| hexadecimal|
 | %s | string: cadena de caracteres|
 | %p | Dirección a un puntero|
-Nota: En C un string se forma al crear un arreglo de caracteres, en donde por defento se reserva un espacio adicional para el carácter "\0" que indica la terminación de la cadena, por ejemplo: `char texto[] = "Hola mundo";`.
 
-Para leer datos desde la consola se puede utilizar la función `scanf()`, con ciertas reservas, pues este método detiene la ejecución del programa y espera a que el usuario escriba algo en el monitor serial y presione enter, lo que detiene cualquier otro proceso dentro del main, más adelante se revisará un metodo no bloqueante.
+Nota: En C un string se forma al crear un arreglo de carácteres, en donde por defecto se reserva un espacio adicional para el carácter "\0" que indica la terminación de la cadena, por ejemplo: `char texto[] = "Hola mundo";`.
+
+Para leer datos desde la consola se puede utilizar la función `scanf()`, con ciertas reservas, pues este método detiene la ejecución del programa y espera a que el usuario escriba algo en el monitor serial y presione enter, lo que detiene cualquier otro proceso dentro del main, más adelante se revisará un metodo no bloqueante. Para poder utilizar el método scanf se necesita activar la comunicación por UART de la consola, más adelante se explicarán los métodos de comunicación y se revisará a detalle estas funciones.
 ```C
+#include <stdio.h>
+#include <string.h>
+#include "esp_system.h"
+#include "esp_console.h"
+#include "esp_vfs_dev.h"
+#include "esp_vfs_fat.h"
+#include "driver/uart.h"
+ 
+void app_main(void)
+{  
+    // 1. Configuración básica de UART
+    ESP_ERROR_CHECK(uart_driver_install(CONFIG_ESP_CONSOLE_UART_NUM, 256, 0, 0, NULL, 0));
+    esp_vfs_dev_uart_use_driver(CONFIG_ESP_CONSOLE_UART_NUM);
+    setvbuf(stdin, NULL, _IONBF, 0);
+    setvbuf(stdout, NULL, _IONBF, 0);
+
+    char nombre[50]; 
+
+    printf("Escribe tu nombre: \n");
+    scanf(" %[^\n]", nombre);   
+    printf("\nHola %s, bienvenido a IDF de Espressif\n\n", nombre);
+    
+}
+
 
 ```
 
