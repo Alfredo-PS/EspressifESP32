@@ -43,7 +43,7 @@ La función para configurar el canal especifico del PWM es:
 ```
 En está función se define el GPIO de salida, si tiene o no interrupciones, el temporizador fuente,  y ciclo de trabajo deseado, nuevamente esto se realiza a travez de una estructura `ledc_conf`; la cual tiene como parámetros: 
 
-* __gpio_num__: GPIO de salida, 0, 1, 2... 33 (Revisar disponibilidad GPIO), con gpio.h GPIO_NUM_0
+* __gpio_num__: GPIO de salida, 0, 1, 2... 33 (Revisar disponibilidad GPIO), con gpio.h `GPIO_NUM_0`
 * __speed_mode__: `LEDC_LOW_SPEED_MODE` o `LEDC_HIGH_SPEED_MODE`
 * __channel__: el canal es una etiqueta identificadora que va de `LEDC_CHANNEL_0` hasta `LEDC_CHANNEL_7`
 * __intr_type__: habilitar o deshabilitar interrupción de desvanecimiento, comunmente `LEDC_INTR_DISABLE`.
@@ -66,6 +66,62 @@ Ejemplo:
     // Se configura el canal, y el PWM comienza, la señal se envia al GPIO 22
     ledc_channel_config(&channelConfig);
 ```
+### Ciclo de trabajo.
+Hay varias manera de cambiar el ciclo de trabajo, la primera es con las funciones `ledc_set_duty` y `ledc_update_duty`.
+```C
+    // Cambia el valor en el registro
+    esp_err_t ledc_set_duty(ledc_mode_t speed_mode, ledc_channel_t channel, uint32_t duty)
 
+    // Actualiza la salida con el nuevo ciclo de trabajo
+    esp_err_t ledc_update_duty(ledc_mode_t speed_mode, ledc_channel_t channel)
 
+```
+`ledc_set_duty` Requiere:
+* Modo
+* canal, es decir salida que cambiará
+* Nuevo ciclo de trabajo
 
+Por otra parte `ledc_update_duty` necesita de:
+* Modo
+* Canal
+
+Juntas se utilizarían:
+```C
+    ledc_set_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_0, 510); // Actualiza el PARÁMETRO de duty del PWM, con 10 bits se encuentra al 50% del ciclo de trabajo
+
+    ledc_update_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_0); // Actualiza la SALIDA FISICA del periférico
+
+```
+Una nueva forma implementada recientemente es por medio de `ledc_set_duty_and_update`, está función realiza ambas tareas, recibe como parametros:
+* Modo
+* Canal
+* Ciclo de trabajo nuevo
+* Hpoint, punto de incio de la fase, casi siempre en 0.
+```C
+esp_err_t ledc_set_duty_and_update ( ledc_mode_t modo_velocidad , ledc_channel_t canal , uint32_t duty , uint32_t hpoint ) 
+```
+Ejemplo:
+```C
+    // Actualiza la salida al 50% del ciclo de trabajo.
+    ledc_set_duty_and_update(LEDC_HIGHT_SPEED_MODE, LEDC_CHANNEL_0, 510, 0);
+```
+### Otras herramientas.
+
+```C
+    esp_err_t ledc_stop(ledc_mode_t speed_mode, ledc_channel_t channel, uint32_t idle_level)
+```
+Esta función es útil para desactvar la salida PWM de un canal, permite dejar en Pin en estado alto o bajo segun se necesite, esto se configura en idl (0 para 0V, y 1 para 3.3V):
+```C
+    // Se corta la generación de la señal PWM y el pin de deja en 0 V
+    ledc_stop(LEDC_LOW_SPEED_MODE, LEDC_CHANNEL_0, 0);
+```
+Tambien es posible cambiar la frecuencia de un Timmer mientras este opera sin necesidad de reiniciarlo. 
+
+```C
+    esp_err_t ledc_set_freq(ledc_mode_t speed_mode, ledc_timer_t timer_num, uint32_t freq_hz)
+```
+Recordar que un mismo Timer puede tener asignados varios canales, al cambiar la freucuencia esto afectará a todos los que esten conectados a ese Timer.
+```C
+    // Cambia la frecuencia del Timer 0 a 10kHz
+    ledc_set_freq(LEDC_HIGHT_SPEED_MODE, LEDC_TIMER_0, 10000);
+```
