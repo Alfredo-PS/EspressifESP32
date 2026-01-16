@@ -29,10 +29,43 @@ Ejemplo de configuración:
 
     // Llenado de parámetros
     timer_conf.speed_mode = LEDC_HIGH_SPEED_MODE;
-    timer_conf.duty_resolution = LEDC_TIMER_8_BIT;
+    timer_conf.duty_resolution = LEDC_TIMER_10_BIT;
     timer_conf.timer_num = LEDC_TIMER_0; 
     timer_conf.freq_hz = 20000;             // 20kHz
 
     // Configuración del timer con las caracteristicas deseadas
     ledc_timer_config(&timerConfig); // La estrucutura se envía como puntero (dirección)
 ```
+### LEDC CHANNEL CONFIG
+La función para configurar el canal especifico del PWM es:
+```C
+    esp_err_t ledc_channel_config(const ledc_channel_config_t *ledc_conf)
+```
+En está función se define el GPIO de salida, si tiene o no interrupciones, el temporizador fuente,  y ciclo de trabajo deseado, nuevamente esto se realiza a travez de una estructura `ledc_conf`; la cual tiene como parámetros: 
+
+* __gpio_num__: GPIO de salida, 0, 1, 2... 33 (Revisar disponibilidad GPIO), con gpio.h GPIO_NUM_0
+* __speed_mode__: `LEDC_LOW_SPEED_MODE` o `LEDC_HIGH_SPEED_MODE`
+* __channel__: canal, es una etiqueta identificadora, de `LEDC_CHANNEL_0` hasta `LEDC_CHANNEL_7`
+* __intr_type__: habilitar o deshabilitar interrupción de desvanecimiento, `LEDC_INTR_DISABLE`.
+* __timer_sel__: designa el timer a utilizar, colocar el timer configirado anteriormente LEDC_TIMER_x
+* __.duty__: configura el ciclo de trabajo, es un entero no signado que puede ir de 0 hasta (2^n)-1, donde n es la resolución configurada en timer usado.
+
+Ejemplo:
+```C
+    // Se crea la estrutura que guarda la configuración del canal
+    ledc_channel_config_t channelConfig = {0};
+
+    // Se rellena la estructura
+    channelConfig.gpio_num = 22;
+    channelConfig.speed_mode = LEDC_HIGH_SPEED_MODE;
+    channelConfig.channel = LEDC_CHANNEL_0;
+    channelConfig.intr_type = LEDC_INTR_DISABLE;
+    channelConfig.timer_sel = LEDC_TIMER_0;
+    channelConfig.duty = 0;  // Ciclo de trabajo en cero
+
+    // Se configura el canal, y el PWM comienza, la señal se envia al GPIO 22
+    ledc_channel_config(&channelConfig);
+```
+
+
+
