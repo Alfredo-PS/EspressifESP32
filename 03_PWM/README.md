@@ -45,10 +45,10 @@ En está función se define el GPIO de salida, si tiene o no interrupciones, el 
 
 * __gpio_num__: GPIO de salida, 0, 1, 2... 33 (Revisar disponibilidad GPIO), con gpio.h GPIO_NUM_0
 * __speed_mode__: `LEDC_LOW_SPEED_MODE` o `LEDC_HIGH_SPEED_MODE`
-* __channel__: canal, es una etiqueta identificadora, de `LEDC_CHANNEL_0` hasta `LEDC_CHANNEL_7`
-* __intr_type__: habilitar o deshabilitar interrupción de desvanecimiento, `LEDC_INTR_DISABLE`.
-* __timer_sel__: designa el timer a utilizar, colocar el timer configirado anteriormente LEDC_TIMER_x
-* __.duty__: configura el ciclo de trabajo, es un entero no signado que puede ir de 0 hasta (2^n)-1, donde n es la resolución configurada en timer usado.
+* __channel__: el canal es una etiqueta identificadora que va de `LEDC_CHANNEL_0` hasta `LEDC_CHANNEL_7`
+* __intr_type__: habilitar o deshabilitar interrupción de desvanecimiento, comunmente `LEDC_INTR_DISABLE`.
+* __timer_sel__: designa el timer a utilizar, se debe colocar el timer configurado anteriormente `LEDC_TIMER_x`
+* __.duty__: coloca el ciclo de trabajo como un entero no signado que puede ir de 0 hasta (2^n)-1, donde n es la resolución configurada en el timer usado.
 
 Ejemplo:
 ```C
