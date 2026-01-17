@@ -1,5 +1,5 @@
 # Curso introductorio al SDK de ESPRESSIF
-## Laboratorio de Robótica
+## Laboratorio de Robótica. Facultad de ingeniería UNAM.
 El presente repositorio es una recopilación a manera de curso de las principales caracteristicas del SDK de Espressif oficialmente denominado ESP-IDF (Espressif IoT Development Framework), el cual es un kit de desarrollo de software diseñado para facilitar la programación de los chips y módulos de Espressif, como por ejemplo la ESP32 y ESP8266. El SDK de Espressif es la plataforma oficial y completa proporcionada por el fabricante para que los desarrolladores puedan aprocechar al máximo las capacidades de los chips, por lo que su manejo es fundamental para aplicaciones de medio y alto nivel.
 
 En este sentido un SDK (Software Development Kit) se define como un conjunto de herramientas, bibliotecas, documentación y ejemplos de código que los desarrolladores necesitan para crear aplicaciones para una plataforma especifica. Las principales caracteristicas de ESP-IDF son:
