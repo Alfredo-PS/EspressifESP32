@@ -1,6 +1,8 @@
 # PWM
 El PWM (Modulación por Ancho de Pulso) es una técnica digital que controla la potencia entregada a un dispositivo variando el tiempo que una señal cuadrada está encendida, la señal digital se ajusta en dos parametros principales, la frecuencia y el ciclo de trabajo.
 
+![Ejemplo de PWM](https://github.com/Alfredo-PS/EspressifESP32/blob/a66761f79f94367af2ac8fcd065c5ef8c1a8293f/.addons/img02/pwm.png)
+
 La ESP32 cuenta con dos sistemas diferentes capaces de generar señales de PWM, el más sencillo es el periferico de control **LEDC**, diseñado principalmente para controlar la intesidad de brillo de los LED, aunque tambien puede utilizarse para otros fines; el segundo periferico es el PWM para control de motores **MCPWM**, el cual es un generador más versátil y a la vez complejo, pero es ideal para aplicaciones de alto nivel en manejo de motores, conversión de potencia basada en conmutación, control de DAC's, y aplicaciones varias.
 
 ## Led Control. LEDC.
