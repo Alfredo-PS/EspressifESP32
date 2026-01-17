@@ -125,3 +125,9 @@ Recordar que un mismo Timer puede tener asignados varios canales, al cambiar la 
     // Cambia la frecuencia del Timer 0 a 10kHz
     ledc_set_freq(LEDC_HIGHT_SPEED_MODE, LEDC_TIMER_0, 10000);
 ```
+
+Para más información puede consultar: 
+
+[LEDC Documentacion Espressif](https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/peripherals/ledc.html)
+
+[MCPWM Documentacion Espressif](https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/peripherals/mcpwm.html) 
