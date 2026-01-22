@@ -79,3 +79,104 @@ Dependiendo del modulo que se estpe utilizando de ADC, ya sea el 1 o el 2, hay d
 | ADC_CHANNEL_8      |   25   |
 | ADC_CHANNEL_9      |   26   |
 
+### Lectura.
+Con todo configurado se puede realizar la lectura del ADC por medio de la función: `adc_oneshot_read()`, la cual resive como parametros **1.** Handle del ADC, **2.** Canal del ADC, y **3.** Apuntador a varible entera donde se guardará el valor leído, por ejemplo de 0 a 4095. Lo anterior se utiliza como sigue:
+
+```C
+    int dato;
+    adc_oneshot_read(handle_adc2, ADC_CHANNEL_8, &dato);
+```
+Si se requiere conocer el voltaje en lugar de un valor entero basta con hacer una regla de tres, esto para apliaciones que no requieran gran exactitud.
+```C
+        Vout = Dout * Vmax / Dmax
+        //Dout: resultado de adc_oneshot_read()
+        //Vmax: Voltaje máximo 
+```
+Por lo tanto el código completo de lectura para un adc one shot queda como:
+```C
+#include <stdio.h>
+#include "esp_adc/adc_oneshot.h"
+#include "freertos/FreeRTOS.h"
+#include "freertos/task.h"
+
+void app_main(void)
+{
+    printf("\n### ADC2 - Analog Digital Converter ###\n");
+
+    // Inicializar ADC2
+    adc_oneshot_unit_handle_t handle_adc2;
+    adc_oneshot_unit_init_cfg_t init_config = {
+        .unit_id = ADC_UNIT_2,
+        .ulp_mode = ADC_ULP_MODE_DISABLE
+    };
+
+    esp_err_t err = adc_oneshot_new_unit(&init_config, &handle_adc2);
+    if (err != ESP_OK) {
+        printf("Error en la inicialización del ADC: %d\n", err);
+        return;
+    }
+
+    // Configurar canal 8 del ADC2
+    adc_oneshot_chan_cfg_t config = {
+        .bitwidth = ADC_BITWIDTH_DEFAULT, // Usa el ancho por defecto (normalmente 12 bits)
+        .atten = ADC_ATTEN_DB_11 // Rango hasta 3.3V
+    };
+
+    err = adc_oneshot_config_channel(handle_adc2, ADC_CHANNEL_8, &config);
+    if (err != ESP_OK) {
+        printf("Error en la configuración del canal: %d\n", err);
+        return;
+    }
+
+    int data;
+    while (1) {
+        err = adc_oneshot_read(handle_adc2, ADC_CHANNEL_8, &data);
+        if (err == ESP_OK) {
+            printf("Valor leído: %d\n", data);
+        } else {
+            printf("Error al leer ADC2: %d\n", err);
+        }
+        vTaskDelay(pdMS_TO_TICKS(100));
+    }
+}
+
+```
+### Curva de calibración.
+Para aplicaciones donde se requierá mayor exactitud se puede realizar la lectura del dato como voltaje usando `adc_cali_raw_to_voltage()`, está función devuelve el valor de voltaje, usarla es mucho más exacto que utilizar una regla de tres pero requiere mayor configuración y procesamiento, esto debido a que la función considera la no linealidad de la curva de voltaje, pues a los extremos suele diferir por variaciones de fabricación por lo que utiliza una curva de calibración almacenada en memoria desde su fabricación, no usar está función puede llevar a un error de hasta 200 mV según el contexto.
+
+La función requiere incluir dos librerías adicionales, condifurar y activar la curva de ajuste con los parametros del chip y el uso de la función solicita tres parametros:**1.** Handle del ADC, **2.** El valor entero obtenido **3.** Puntero a un entero donde se guardará la lectura en **milivolts**. A continuación se presenta el uso de `adc_cali_raw_to_voltage()`.
+```C
+#include "esp_adc/adc_cali.h"           // Interfaz genérica de calibración
+#include "esp_adc/adc_cali_scheme.h"    // Esquemas de calibración (Line Fitting /
+
+// Declarar el handle de calibración
+adc_cali_handle_t cali_handle = NULL;
+
+// Configurar el esquema (para ESP32 es Line Fitting)
+adc_cali_line_fitting_config_t cali_config = {
+    .unit_id = ADC_UNIT_1,
+    .atten = ADC_ATTEN_DB_12,           // Debe coincidir con la del canal
+    .bitwidth = ADC_BITWIDTH_DEFAULT,
+};
+
+// Crear el esquema
+esp_err_t ret = adc_cali_create_scheme_line_fitting(&cali_config, &cali_handle);
+
+if (ret == ESP_OK) {
+    // A partir de aquí, ya se puede usar adc_cali_raw_to_voltage()
+    int raw_result;
+    int voltage_mv;
+
+    // 1. Obtener el valor crudo (ejemplo: 2450)
+    ESP_ERROR_CHECK(adc_oneshot_read(adc1_handle, ADC_CHANNEL_0, &raw_result));
+
+    // 2. Convertir a voltaje usando el handle de calibración
+    // Si raw_result es 2450 y la atenuación es 12dB, voltage_mv podría ser ~1850 mV
+    esp_err_t ret = adc_cali_raw_to_voltage(cali_handle, raw_result, &voltage_mv);
+
+    if (ret == ESP_OK) {
+        printf("Lectura Cruda: %d | Voltaje Calibrado: %d mV\n", raw_result, voltage_mv);
+    }
+    
+}
+```
