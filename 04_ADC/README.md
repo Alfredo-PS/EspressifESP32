@@ -180,3 +180,10 @@ if (ret == ESP_OK) {
     
 }
 ```
+### Terminar de usar el ADC
+Una vez que se haya terminado de utilizar el ADC los recurosos empleados se pueden "reciclar" mediante la función adc_oneshot_del_unit(), como único parametro recibe el handle del ADC usado, por ejemplo:
+```C
+    ESP_ERROR_CHECK(adc_oneshot_del_unit(handle_adc2));
+```
+### Referencias.
+Pra más imporación puedes consultar la documentación oficial [Analog to Digital Converter (ADC) Oneshot Mode Driver](https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/peripherals/adc_oneshot.html).
