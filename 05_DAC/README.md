@@ -106,4 +106,76 @@ Para que el DAC comience la conversión y se tenga salida en el GPIO hay dos man
 esp_err_t ret = dac_continuous_write(dac_handle, bufer, sizeof(bufer), &num_Dat, pdMS_TO_TICKS(100));
 
 ```
-El primer parametro es el handle creado anteriormente, en el segundo se tendrá el arreglo con los datos que se enviarán, despues se coloca el tamaño del bufer, se puede conocer el numero de datos realemnte escritos en el DAC para ello colocar un apuntador una variable entera, finalmente se debe configurar un delay entre cada conversión o envio de datos.
+El primer parametro es el handle creado anteriormente, en el segundo se tendrá el arreglo con los datos que se enviarán, despues se coloca el tamaño del bufer, se puede conocer el numero de datos realemnte escritos en el DAC para ello colocar un apuntador a una variable entera, finalmente se debe configurar un delay entre cada conversión o envio de datos.
+
+Otra forma de utilizar el dalay de manera continua es por medio de una escritura ciclica, la cual funciona de una manera muy parecida a `dac_continuous_write()`, pero al llegar al final regresa al incio del bufer de datos, lo que permite crear señales periodicas de cualquier tipo con relavita precisión, este método emplea: `dac_continuous_write_cyclically()`, la forma de usarla es la siguiente:
+
+```C
+ESP_ERROR_CHECK(dac_continuous_write_cyclically(dac_handle, data, sizeof(data), NULL));
+```
+Como primer parámetro recibe el handle del DAC, luego el búfer de datos, luego el tamaño del búfer y finalmente se puede colocar un apuntador para registrar los bytes que se han cargado en el DMA, normalmente se utiliza en NULL.
+
+A continuación se presenta un ejemplo, en el que se configura el DAC para crear una señal diente de sierra:
+
+```C
+#include <stdio.h>
+#include "freertos/FreeRTOS.h"
+#include "freertos/task.h"
+#include "driver/dac_continuous.h"
+
+void app_main(void)
+{
+    dac_continuous_handle_t dac_handle;
+
+
+    dac_continuous_config_t cont_cfg = {
+        .chan_mask = DAC_CHANNEL_MASK_CH0, 
+        .desc_num = 4,
+        .buf_size = 512,                  
+        .freq_hz = 25000,
+        .offset = 50,
+        .clk_src = DAC_DIGI_CLK_SRC_APLL,   
+        .chan_mode = DAC_CHANNEL_MODE_SIMUL,
+    };
+
+    // Intentar inicializar
+    esp_err_t err = dac_continuous_new_channels(&cont_cfg, &dac_handle);
+
+    uint8_t data[512];
+    for (int i = 0; i < 512; i++) data[i] = i;
+
+    ESP_ERROR_CHECK(dac_continuous_enable(dac_handle));
+
+
+    ESP_ERROR_CHECK(dac_continuous_write_cyclically(dac_handle, data, sizeof(data), NULL));
+
+    printf("DAC DMA iniciado correctamente.\n");
+    while(1){
+        //Hola mundo
+        vTaskDelay(pdMS_TO_TICKS(5000));
+    }
+}
+```
+## DAC Cosine.
+Con este modo se puede generar una señal cosenoidal, la librería del DAC Cosine a incluir es:
+```C
+    #include "driver/dac_cosine.h"
+```
+De manera similar que en los anteriores temas, se genera un handle, se rellena la estrucutra de configuración y se inicializa un canal, la ESP32 sólo puede general una señal senoidal en un canal, esta señal se genera por hardware, lo que hace que sea un proceso eficiente energeticamente y que no requiere un alto procesamiento por parte de la CPU.
+
+Primero se genera el handle:
+```C
+    dac_cosine_handle_t cos_handle;
+```
+Luego se genera la estrucutra de configuración:
+```C
+    dac_cosine_config_t cos_cfg = {
+        .chan_id = DAC_CHAN_0,         // Canal 0 = GPIO 25
+        .freq_hz = 10000,               // Frecuencia: 1000 Hz (1 kHz)
+        .clk_src = DAC_COSINE_CLK_SRC_DEFAULT, 
+        .atten = DAC_COSINE_ATTEN_DEFAULT, // Amplitud máxima (~3.3V pico a pico)
+        .phase = DAC_COSINE_PHASE_0,       // Fase inicial 0°
+        .offset = 0,                       // Desplazamiento de voltaje (DC Offset)
+    };
+```
+La estructura contiene los parametos siguientes: canal o GPIO, frecuencia de la señal cosenoidal creada 
