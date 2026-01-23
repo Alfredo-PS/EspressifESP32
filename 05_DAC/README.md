@@ -66,3 +66,37 @@ El calculo del valor de salida se puede realizar como:
      valor = (2.0 / 3.3) * 255 // valor = 154.54 -> Usamos 154 o 155   
 ```
 Se recomienda medir el voltaje VDD para mejorar la funcionalidad.
+
+## DAC Continuos (por DMA).
+En está configuración se utiliza un bufer o arreglo de enteros para guardar los valores que se cargarán al DAC, y se hace uso del DMA (Direct Memory Accsess), el cual permite transferir datos desde la RAM al periferico sin intervención constante de la CPU, lo que permite generar formas de onda complejas a alta frecuencia.
+
+Así cómo en el ADC y el DAC one shot se debe crear un handle, al igual que una estructura de configuración para despues inicializar el canal, de la manera siguiente:
+```C
+    // Creación del handle
+    dac_continuous_handle_t dac_handle;
+
+    //Configuración del DAC
+    dac_continuous_config_t cont_cfg = {
+        .chan_mask = DAC_CHANNEL_MASK_CH0, 
+        .desc_num = 4,
+        .buf_size = 512,                  
+        .freq_hz = 25000,
+        .offset = 50,
+        .clk_src = DAC_DIGI_CLK_SRC_APLL,   
+        .chan_mode = DAC_CHANNEL_MODE_SIMUL,
+    };
+
+    // Inicialización
+    esp_err_t err = dac_continuous_new_channels(&cont_cfg, &dac_handle);
+```
+Los parametros de configuración se describen a continuación:
+
+| Parametro  | Descripción |
+| ------------- |:-------------:|
+| `chan_mask`      | Máscara de los canales a utilizar: **DAC_CHANNEL_MASK_CH0** para GPIO 25, **DAC_CHANNEL_MASK_CH1** para GPIO 26 Y **DAC_CHANNEL_MASK_ALL** para ambos|
+| `desc_num`      |  Número de descriptores (entero), minimo 2, máximo 255, recomendado entre 4 y 8    |
+| `buf_size`      | Tamaño del búfer, debe estar entre 32 y 4092 bytes, cada descriptor tiene un búfer de este tamaño     |
+| `freq_hz`      | Frecuencia de conversión del DAC en Hz, los limites de la frecuencia dependen del reloj asociado, no se recomiendad frecuencias superiores a 2MHz     |
+| `offset`      | Offset de los datos digitales del DAC, Rango de -128 hasta 127     |
+| `clk_src`      | Fuente de reloj: **DAC_DIGI_CLK_SRC_DEFAULT** tiene un rango de 19.6 kHz a varios MHz, y **DAC_DIGI_CLK_SRC_APLL** para un rago de 648 Hz a varios MHz.     |
+| `chan_mode`      | Establece como se envia el voltaje a los GPIO, **DAC_CHANNEL_MODE_SIMUL** envia el mismo dato a ambos GPIO si estan activos, **DAC_CHANNEL_MODE_ALTER** los datos se reparten alternadamente entre los dos canales, **DAC_CHANNEL_MODE_SINGLE** solo envía datos a un canal, el activo.   |
