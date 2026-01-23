@@ -178,4 +178,57 @@ Luego se genera la estrucutra de configuración:
         .offset = 0,                       // Desplazamiento de voltaje (DC Offset)
     };
 ```
-La estructura contiene los parametos siguientes: canal o GPIO, frecuencia de la señal cosenoidal creada 
+La estructura contiene los parametos siguientes: 
+| Parametro  | Descripción |
+| :-------------: |-------------|
+| `chan_id`      | Canal del DAC donde saldrá la señal, recomendado `DAC_CHAN_0` GPIO 25 |
+| `freq_hz`      | Frecuencia de la señal en Hz, desde 130 Hz hasta varios MHz en teoria, se recomienda no superar el limite 200 KHz para evitar distorsión  |
+| `clk_src`      | Señal de reloj utilizada, por ahora sólo existe  `DAC_COSINE_CLK_SRC_DEFAULT` |
+| `atten`      | Amplitud de la señal, valor maximo `DAC_COSINE_ATTEN_DEFAULT` 3.3 V pico a pico |
+| `phase`      | Fase incial de la señal, `DAC_COSINE_PHASE_0` o `DAC_COSINE_PHASE_180` |
+| `offset`      | Offset, puede ser de -155 a 154  |
+
+Con la configuración lista se incializa el canal por medio de la función `dac_cosine_new_channel()` que recibe los apuntadores a la estructura de configuración y al handle del canal en ese orden, de la siguiente forma:
+```C
+    ESP_ERROR_CHECK(dac_cosine_new_channel(&cos_cfg, &chan_handle));
+```
+Por último se incia la generación de la onda cosenoidal con la función `dac_cosine_start()`, como unico parametro recibe el handle del DAC:
+```C
+    ESP_ERROR_CHECK(dac_cosine_start(chan_handle));
+```
+El código completo para generar una señal coseno de 10 KHz se presenta a continuación:
+```C
+#include <stdio.h>
+#include "freertos/FreeRTOS.h"
+#include "freertos/task.h"
+#include "driver/dac_cosine.h" 
+
+void app_main(void)
+{
+    // Declarar el handle del canal
+    dac_cosine_handle_t chan_handle;
+
+    // Configuración de la onda
+    dac_cosine_config_t cos_cfg = {
+        .chan_id = DAC_CHAN_0,         // Canal 0 = GPIO 25
+        .freq_hz = 10000,               // Frecuencia: 1000 Hz (1 kHz)
+        .clk_src = DAC_COSINE_CLK_SRC_DEFAULT, 
+        .atten = DAC_COSINE_ATTEN_DEFAULT, // Amplitud máxima (~3.3V pico a pico)
+        .phase = DAC_COSINE_PHASE_0,       // Fase inicial 0°
+        .offset = 0,                       // Desplazamiento de voltaje (DC Offset)
+    };
+
+    // Inicializar el canal
+    ESP_ERROR_CHECK(dac_cosine_new_channel(&cos_cfg, &chan_handle));
+
+    // Iniciar la generación de la onda
+    ESP_ERROR_CHECK(dac_cosine_start(chan_handle));
+
+    printf("Generando onda senoidal de 1kHz en GPIO 25...\n");
+
+    while (1) {
+        vTaskDelay(pdMS_TO_TICKS(1000));
+    }
+}
+
+```
