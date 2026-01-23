@@ -100,3 +100,10 @@ Los parametros de configuración se describen a continuación:
 | `offset`      | Offset de los datos digitales del DAC, Rango de -128 hasta 127     |
 | `clk_src`      | Fuente de reloj: **DAC_DIGI_CLK_SRC_DEFAULT** tiene un rango de 19.6 kHz a varios MHz, y **DAC_DIGI_CLK_SRC_APLL** para un rago de 648 Hz a varios MHz.     |
 | `chan_mode`      | Establece como se envia el voltaje a los GPIO, **DAC_CHANNEL_MODE_SIMUL** envia el mismo dato a ambos GPIO si estan activos, **DAC_CHANNEL_MODE_ALTER** los datos se reparten alternadamente entre los dos canales, **DAC_CHANNEL_MODE_SINGLE** solo envía datos a un canal, el activo.   |
+
+Para que el DAC comience la conversión y se tenga salida en el GPIO hay dos maneras de hacerlo, la primera que escribe el valor de manera continua, y otro que lo hace de forma ciclica, cada manera depende de la intención que se busque, la función dac_continuous_write() toma los datos del búfer y los escribe por DMA, una vez el bufér está vacio el pin tomará el valor final hasta que se escriban nuevos valores, al llegar al final se enciende una bandera si ya no hay más datos. Es ideal por ejemplo para reproducir señales de audio.
+```C
+esp_err_t ret = dac_continuous_write(dac_handle, bufer, sizeof(bufer), &num_Dat, pdMS_TO_TICKS(100));
+
+```
+El primer parametro es el handle creado anteriormente, en el segundo se tendrá el arreglo con los datos que se enviarán, despues se coloca el tamaño del bufer, se puede conocer el numero de datos realemnte escritos en el DAC para ello colocar un apuntador una variable entera, finalmente se debe configurar un delay entre cada conversión o envio de datos.
