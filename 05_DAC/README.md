@@ -92,7 +92,7 @@ Así cómo en el ADC y el DAC one shot se debe crear un handle, al igual que una
 Los parametros de configuración se describen a continuación:
 
 | Parametro  | Descripción |
-| ------------- |:-------------:|
+| ------------- |-------------|
 | `chan_mask`      | Máscara de los canales a utilizar: **DAC_CHANNEL_MASK_CH0** para GPIO 25, **DAC_CHANNEL_MASK_CH1** para GPIO 26 Y **DAC_CHANNEL_MASK_ALL** para ambos|
 | `desc_num`      |  Número de descriptores (entero), minimo 2, máximo 255, recomendado entre 4 y 8    |
 | `buf_size`      | Tamaño del búfer, debe estar entre 32 y 4092 bytes, cada descriptor tiene un búfer de este tamaño     |
