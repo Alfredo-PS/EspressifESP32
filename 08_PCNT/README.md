@@ -12,6 +12,14 @@ Como es habitual la configuración de los PCNT comienza con la asignación de re
 
   ESP_ERROR_CHECK(pcnt_new_unit(&unit_config, &pcnt_unit));
 ```
+La estuctura `pcnt_unit_config_t` se suele configurar unicamente con los dos parametros mostrados anteriormente, pero en realidad contiene los siguientes:
+| Parámetro  | Desccripción |
+| :-------------: |-------------|
+| `low_limit`      | Límite inferior del contador, debe ser **menor** a cero    |
+| `high_limit`      | Límite superior del contador, debe ser **mayor** a cer0  |
+| `intr_priority`      | Prioridad de la interrupción si se utiliza    |
+| `accum_count`      | Recuento acumulado, permite acumular el valor ddel conteo cuando se desborda en cualquiera de los dos límites    |
+
 Con la unidad lista se procede a crear un nuevo canal por medio de la estructura de configuración correspondiente `pcnt_chan_config_t`, en está estructura se define un GPIO de flanco y otro de nivel para cada canal deseado, en general si se utilizan A y B, entonces el canal A tendra el GPIO de A en flanco y el gpio de nivel en B, y lo contrario para el canal B, lo que permitira la lectura de la cuadratura; finalmente se inicia el nuevo canal configurado con pcnt_new_channel(), la configuración para un canal se muestra a continuación:
 ```C
     
@@ -25,9 +33,13 @@ Con la unidad lista se procede a crear un nuevo canal por medio de la estructura
     
     ESP_ERROR_CHECK(pcnt_new_channel(pcnt_unit, &chan_a_config, &pcnt_chan_a));
 ```
+En la configuración de la estructura `pcnt_chan_config_t` sólo se presentarón los dos principales parametros `edge_gpio_num` y `edge_gpio_num`; el resto de parametros sirven para configuraciones menores y se omitiran por el momento, recordar que cada canal debe tener la posibilidad de contar los pulsos e identificar la dirección del movimiento, por ello se configura de esa manera.
+En el canal A, `.edge_gpio_num = ENCODER_GPIO_A` es decir se detectará el flanco desde el GPIO 18, y en ese momento preguntará por el estado lógico o nivel del GPIO 19 `.level_gpio_num = ENCODER_GPIO_B`, Si en el flanco de A, la señal B está en BAJO, el giro es hacia un lado, pero si al momento de detectar el flanco en A, B está en ALTO entonces gira en sentido contrario.
+
 Se debe repetir el codigo anterior para cada canal deseado, normalmente los encoder son de dos canales A y B, por lo que se tendrá la configuración para A (mostrada arriba) y la configuración para B.
 
 Con los canales listo se proocese a definir las acciones para cada canal por medio de pcnt_channel_set_edge_action() para el flanco de subida y pcnt_channel_set_level_action() para el nivel, ambas funciones reciben el handle de cada canal y las acciones que deben ejecutar, por ejemplo para un encoder de cuadratura con dos canales A y B: 
+
 ```C
     ESP_ERROR_CHECK(pcnt_channel_set_edge_action(pcnt_chan_a, PCNT_CHANNEL_EDGE_ACTION_DECREASE, PCNT_CHANNEL_EDGE_ACTION_INCREASE));
     ESP_ERROR_CHECK(pcnt_channel_set_level_action(pcnt_chan_a, PCNT_CHANNEL_LEVEL_ACTION_KEEP, PCNT_CHANNEL_LEVEL_ACTION_INVERSE));
@@ -35,8 +47,12 @@ Con los canales listo se proocese a definir las acciones para cada canal por med
     ESP_ERROR_CHECK(pcnt_channel_set_level_action(pcnt_chan_b, PCNT_CHANNEL_LEVEL_ACTION_KEEP, PCNT_CHANNEL_LEVEL_ACTION_INVERSE));
 
 ```
+El codigo anterior se conoce como configuración de acciones, para cada cal se divide en dos funciones, la primera `pcnt_channel_set_edge_action()` define las acciones respeccto a los flancos, ya sea de subida o de bajada del canal, y como tal se trata del disparador del contador, en el moento en que el GPIO del canal pasa por un flanco decide que acción hacer, en la configuración anterior decide sumar o restar dependiendo si es de subida o de bajada. El primer paramtro es para el handle del canal, el segundo parametro es el flanco de subida, y el tercero el flanco de bajada de la señal.
 
-Adiconalmente se puede configurar un filtro opcional que elimina el ruido, para ello nuevamente se crea la estructura de configuración con `pcnt_glitch_filter_config_t` en donde se coloca el valor en nano segundos, y se utiliza la función `pcnt_unit_set_glitch_filter()` para activarlo, la cual solo requiere el handle de la unidad del PCNT y un apuntador a la estructura de configuracción, la implementación de este filtro para el encoder de un motor a media velocidad sería:
+Por otra parte la función pcnt_channel_set_level_action decide si sumar o restar deacuerdo al valor de nivel del GPIO configurado, nuevamente el primer parametro es para el handle del contador, el segundo es para la acción en caso de un nivel alto, y el último es para la acción en caso de nivel bajo; los valores que pueden asumir lso parametros en ambas funciones son:
+**PCNT_CHANNEL_EDGE_ACTION_INCREASE**, **PCNT_CHANNEL_EDGE_ACTION_DECREASE** y **PCNT_CHANNEL_LEVEL_ACTION_KEEP**.
+
+Adicionalmente se puede configurar un filtro opcional que elimina el ruido, para ello nuevamente se crea la estructura de configuración con `pcnt_glitch_filter_config_t` en donde se coloca el valor en nano segundos, y se utiliza la función `pcnt_unit_set_glitch_filter()` para activarlo, la cual solo requiere el handle de la unidad del PCNT y un apuntador a la estructura de configuracción, la implementación de este filtro para el encoder de un motor a media velocidad sería:
 ```C
     // Filtro de Glitch (opcional, elimina ruido)
     pcnt_glitch_filter_config_t filter_config = {
