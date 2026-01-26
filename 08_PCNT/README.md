@@ -74,7 +74,7 @@ Finalmente para conocer le numero de cuentas, se hace uso de la función `pcnt_u
           int dato;
           pcnt_unit_get_count(pcnt_unit, &dato);
 ```
-Cuando se obtiene el numero de cuentas hasta el momento en realidad el contador sigue incrementando o decrementando segun las señales de entrada, y solo se reincia o vuelve a cero en caso de que llegue a cualquiera de los dos limites, superior o inferior, si sedesea eliminar el numero de cuentas en cualquier momento se puede emeplear la función `pcnt_unit_clear_count()`, que recibe como unico parametro en handle de la unidad:
+Cuando se obtiene el numero de cuentas hasta el momento en realidad el contador sigue incrementando o decrementando segun las señales de entrada, y solo se reincia o vuelve a cero en caso de que llegue a cualquiera de los dos límites, superior o inferior, si se desea eliminar el numero de cuentas en cualquier momento se puede emplear la función `pcnt_unit_clear_count()`, que recibe como unico parametro el handle de la unidad:
 ```C
         ESP_ERROR_CHECK(pcnt_unit_clear_count(pcnt_unit)); 
 ```
