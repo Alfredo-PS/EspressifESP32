@@ -10,3 +10,9 @@ En este sentido un SDK (Software Development Kit) se define como un conjunto de 
 * Es un framework modular, e incluye otros componentes para diferentes aplicaciones.
 
 En el presente curso aprenderás a manejar el SDK ESPRESSIF para sacar el máximo provecho de la ESP32, a lo largo del curso se repasarán distintas aplicaciones para que puedas integrarlas directamente en tus proyectos de una manera fácil y sencilla. La ESP32 es un microcontrolador muy poderoso, y  es ampliamente utilizado en proyectos de robotica e IoT, y en la resolución de una gran diversidad de problemas, por lo que conocerla a pronfundidad y saber utilizar las herramientas que nos ofrece el fabricante te abrirá todo un mundo de posibilidades.
+
+## Fuentes de consulta del repositorio.
+
+Documentación y códigos basados en la librería oficial de Espressif: [ESP32 Documentacion](https://docs.espressif.com/projects/esp-idf/en/stable/esp32/get-started/index.html).
+
+Codigos y estructura extraídos de: [ESP32 IDF Angel Molina](https://github.com/AngMolGo/esp32_idf_templates/tree/main/examples)
