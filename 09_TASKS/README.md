@@ -51,7 +51,59 @@ En donde los parametros de la función en orden son:
 | **uxPriority**      |  Prioridad con la que se debe ejecutar la tarea    |
 | **pxCreatedTask**      | identificador de la tarea (handle)     |
 
-Un ejemplo basico de una tarea es:
+Un ejemplo básico de una tarea es:
+
+```C
+#include <stdio.h>
+#include "freertos/FreeRTOS.h"
+#include "freertos/task.h"
+#include "driver/gpio.h"
+int flag;
+
+void vTareaEjemplo(void *pvParameters) {
+    printf("Iniciando tarea...\n");
+    int valor = 0;
+
+    while(1) {
+        // Lógica principal
+        if (flag== 1){
+            printf("Haciendo algo divertido :)\n");
+            if(valor == 0){
+                valor = 1;
+            }else{
+                valor = 0;
+            }
+
+            gpio_set_level(GPIO_NUM_4, valor);
+            
+            flag = 0;
+        }
+        vTaskDelay(pdMS_TO_TICKS(50));
+    }
+}
+
+void app_main(void)
+{
+    TaskHandle_t tarea_handle = NULL;
+    xTaskCreate(
+            vTareaEjemplo,
+            "NombreTarea1",
+            2048,
+            NULL,
+            1,
+            &tarea_handle
+    );
+    gpio_set_direction(GPIO_NUM_4, GPIO_MODE_OUTPUT);
+    gpio_set_level(GPIO_NUM_5, 0); 
+    flag = 0;   
+
+    while (1) {
+
+        flag = 1;
+        vTaskDelay(pdMS_TO_TICKS(1000));
+    }
+}
+```
 
 Normalmente las tareas se "despiertan" o activan por medio de una bandera como se explicó anteriormente, y dicha bandera se alza de diferentes maneras, por ejemplo a travez de una ISR por GPIO, o con un GPTimer, una implementación basica de estos casos es la siguiente:
 
