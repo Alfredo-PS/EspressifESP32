@@ -105,7 +105,7 @@ esp_err_t ledc_set_duty_and_update ( ledc_mode_t modo_velocidad , ledc_channel_t
 Ejemplo:
 ```C
     // Actualiza la salida al 50% del ciclo de trabajo.
-    ledc_set_duty_and_update(LEDC_HIGHT_SPEED_MODE, LEDC_CHANNEL_0, 510, 0);
+    ledc_set_duty_and_update(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_0, 510, 0);
 ```
 ### Otras herramientas.
 
