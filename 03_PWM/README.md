@@ -100,10 +100,14 @@ Una nueva forma implementada recientemente es por medio de `ledc_set_duty_and_up
 * Ciclo de trabajo nuevo
 * Hpoint, punto de incio de la fase, casi siempre en 0.
 ```C
-esp_err_t ledc_set_duty_and_update ( ledc_mode_t modo_velocidad , ledc_channel_t canal , uint32_t duty , uint32_t hpoint ) 
+//Antes de la configuración
+ledc_fade_func_install(0); // Instalación del servicio que permite usar ledc_set_duty_and_update()
+esp_err_t ledc_set_duty_and_update ( ledc_mode_t modo_velocidad , ledc_channel_t canal , uint32_t duty , uint32_t hpoint ); 
 ```
 Ejemplo:
 ```C
+    //Antes de la configuración
+    ledc_fade_func_install(0); // Instalación del servicio que permite usar ledc_set_duty_and_update()
     // Actualiza la salida al 50% del ciclo de trabajo.
     ledc_set_duty_and_update(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_0, 510, 0);
 ```
