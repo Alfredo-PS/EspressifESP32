@@ -202,4 +202,16 @@ void app_main(void) // Función principal de un programa de ESP32, el firmware b
 }
 
 ```
+## GPIO Config
+La forma más profesional y sencilla de configurar multiples puertos GPIO es por medio de `gpio_config()`
 
+```C
+    gpio_config_t io_conf = {
+        .intr_type = GPIO_INTR_POSEDGE,    // Flanco de subida
+        .mode = GPIO_MODE_INPUT,           // Modo entrada
+        .pin_bit_mask = (1ULL << BOTON_GPIO),
+        .pull_down_en = 1,                 // Pull-down 
+        .pull_up_en = 0,
+    };
+    gpio_config(&io_conf);
+```
