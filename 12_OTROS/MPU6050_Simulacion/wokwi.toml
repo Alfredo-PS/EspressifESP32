@@ -1,0 +1,9 @@
+[wokwi]
+version = 1
+elf = ".pio/build/esp32/firmware.elf"
+firmware = "build/clase2.bin"
+
+# If you want to access your ESP32's web server
+[[net.forward]]
+from = "localhost:8100"
+to = "target:80"
