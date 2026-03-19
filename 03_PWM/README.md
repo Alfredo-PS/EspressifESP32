@@ -131,6 +131,11 @@ Recordar que un mismo Timer puede tener asignados varios canales, al cambiar la 
     // Cambia la frecuencia del Timer 0 a 10kHz
     ledc_set_freq(LEDC_HIGHT_SPEED_MODE, LEDC_TIMER_0, 10000);
 ```
+Otra función que pudiera ser util es la función `ledc_get_duty()`, que sirve para concer el valor actual de ciclo de trabajo para un canal PWM, devuelve el valor como un entero no signano.
+```C
+    // uint32_t ledc_get_duty(ledc_mode_t speed_mode, ledc_channel_t channel);
+    int dutyActual =  ledc_get_duty(LEDC_HIGH_SPEED_MODE, canal);
+```
 
 Para más información puede consultar: 
 
